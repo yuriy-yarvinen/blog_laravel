@@ -165,8 +165,6 @@ class PostController extends Controller
 
 		}
 
-		
-
 		$request->session()->flash('request_status','Пост создан');
 		
 		return redirect()->route('posts.show',['post' => $blogPost->id]);
