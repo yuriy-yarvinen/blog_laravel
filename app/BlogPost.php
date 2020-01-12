@@ -36,6 +36,11 @@ class BlogPost extends Model
 		return $this->hasMany(Comment::class)->latest();
 	}
 
+	public function image()
+	{
+		return $this->hasOne(Image::class);
+	}
+
 	public function tags()
 	{
 		return $this->belongsToMany(Tag::class)->withTimestamps()->as('tagged');
@@ -56,6 +61,7 @@ class BlogPost extends Model
 		
 		static::deleting(function(BlogPost $blogPost){
 			$blogPost->comments()->delete();
+			// $blogPost->image()->delete();
 			Cache::tags(['blog-post'])->forget("blog-post-$blogPost->id");
 		});
 

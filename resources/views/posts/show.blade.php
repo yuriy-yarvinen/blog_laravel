@@ -3,8 +3,28 @@
 @section('content')
 <div class="row">
 	<div class="col-8">
-		<h1>
+		{{-- <img src="{{ Storage::url($post->image->path) }}" alt="image"> --}}
+		{{-- <img src="{{ $post->image->url() }}" alt="image"> --}}
+		@if ($post->image)
+		<div style="color:#fff;width:100%;min-height:500px;background-image: url({{ $post->image->url() }});background-attachment:fixed;text-align:center;">
+			<h1 style="padding-top:100px; text-shadow: 1px 2px #000;">
+		@else
+			<h1>		
+		@endif
+
 			{{ $post->title }}
+			@badge([
+				'type' => 'primary',
+				'show' => now()->diffInMinutes($post->created_at) < 60
+			])
+				New!!!
+			@endbadge
+		@if ($post->image)
+			</h1>
+		</div>
+		@else
+			</h1>
+		@endif
 			{{-- @if ((new Carbon\Carbon())->diffInMinutes($post->created_at) < 60)
 				@component('components.badge',['type' => 'primary'])
 					New!!!
@@ -17,13 +37,6 @@
 				@endbadge
 			@endif --}}
 
-			@badge([
-				'type' => 'primary',
-				'show' => now()->diffInMinutes($post->created_at) < 60
-			])
-				New!!!
-			@endbadge
-		</h1>
 		<p>{{ $post->content }}</p>
 		<p>{{ $post->json }}</p>
 

@@ -6,6 +6,7 @@ use App\BlogPost;
 use App\Http\Requests\StorePost;
 use App\User;
 use App\Comment;
+use App\Image;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -120,7 +121,7 @@ class PostController extends Controller
 		$userCounter = Cache::tags(['blog-post'])->get($counterKey);
 
 		$blogPost = Cache::tags(['blog-post'])->remember("blog-post-$id", 60, function () use ($id) {
-			return BlogPost::with('comments', 'tags', 'user', 'comments.user')
+			return BlogPost::with('comments', 'tags', 'user', 'comments.user', 'image')
 			->findOrFail($id);
 		});
 
@@ -150,19 +151,33 @@ class PostController extends Controller
 
 		$blogPost = BlogPost::create($validatedData);
 
-		$hasFile = $request->hasFile('image');
+		// $hasFile = $request->hasFile('image');
 
-		dump($hasFile);
+		// dump($hasFile);
 
-		if ($hasFile) {
-			$file = $request->file('image');
+		if ($request->hasFile('image')) {
+			$path = $request->file('image')->store('image');
 
-			dump($file);
-			dump($file->getClientMimeType());
-			dump($file->getClientOriginalExtension());
-			dump($file->store('images'));
-			dump(Storage::disk('public')->putFile('images', $file));
+			$blogPost->image()->save(
+				Image::create([
+					'path' => $path
+				])
+			);
 
+			// dump($file);
+			// dump($file->getClientMimeType());
+			// dump($file->getClientOriginalExtension());
+			// dump($file->store('images'));
+			// dump(Storage::disk('public')->putFile('images', $file));
+
+			// $name1 = $file->storeAs('images', $blogPost->id . '.' . $file->guessExtension());
+			// $name3 = $file->storeAs('image', $blogPost->id . '.' . $file->guessExtension());
+			// dump(Storage::putFileAs('images', $file , $blogPost->id . '.' . $file->guessExtension()));
+			// $name2 = Storage::disk('local')->putFileAs('images', $file , $blogPost->id . '.' . $file->guessExtension());
+
+			// dump(Storage::url($name1));
+			// dump(Storage::disk('local')->url($name2));
+			
 		}
 
 		$request->session()->flash('request_status','Пост создан');
@@ -191,6 +206,23 @@ class PostController extends Controller
 		// }
 		$this->authorize('update', $post);
 		$post->fill($validatedData);
+
+		if ($request->hasFile('image')) {
+			$path = $request->file('image')->store('image');
+
+			if ($post->image) {
+				Storage::delete($post->image->path);
+				$post->image->path = $path;
+				$post->image->save();
+			}
+			else {
+				$post->image()->save(
+					Image::create([
+						'path' => $path
+					])
+				);				
+			}
+		}
 
 		$post->save();
 
