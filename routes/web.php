@@ -22,5 +22,6 @@ Route::get('/secret','HomeController@secret')->name('secret')->middleware('can:c
 // Route::resource('/posts','PostController')->except(['destroy']);
 Route::resource('posts','PostController');
 Route::resource('posts.comments','BlogPostCommentController')->only(['store']);
+Route::resource('users','UserController')->only(['show', 'edit', 'update']);
 
 Auth::routes();
