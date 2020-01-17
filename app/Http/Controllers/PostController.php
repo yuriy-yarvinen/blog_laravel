@@ -159,10 +159,9 @@ class PostController extends Controller
 			$path = $request->file('image')->store('image');
 
 			$blogPost->image()->save(
-				Image::create([
-					'path' => $path
-				])
-			);
+				// Image::create(['path' => $path]));
+				// function make create polymorphig values
+				Image::make(['path' => $path]));
 
 			// dump($file);
 			// dump($file->getClientMimeType());
@@ -217,10 +216,8 @@ class PostController extends Controller
 			}
 			else {
 				$post->image()->save(
-					Image::create([
-						'path' => $path
-					])
-				);				
+					// Image::create(['path' => $path]));				
+					Image::make(['path' => $path]));				
 			}
 		}
 

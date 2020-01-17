@@ -2,19 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\BlogPost;
 use App\Http\Requests\StoreComment;
+use App\User;
 
-class BlogPostCommentController extends Controller
+class UserCommentController extends Controller
 {
 	public function __construct()
 	{
 		$this->middleware('auth')->only(['store']);	
 	}
 
-    public function store(BlogPost $post, StoreComment $request)
+    public function store(User $user, StoreComment $request)
 	{
-		$post->comments()->create([
+		$user->commentsOn()->create([
 			'content' => $request->input('comment'),
 			'user_id' => $request->user()->id
 		]);
@@ -23,6 +23,6 @@ class BlogPostCommentController extends Controller
 
 		// return redirect()->route('posts.show',['post' => $post->id]);
 		return redirect()->back()
-		->withRequestStatus('Комментарий добавлен');
+			->withRequestStatus('Комментарий добавлен');
 	}
 }

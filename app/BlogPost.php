@@ -33,12 +33,13 @@ class BlogPost extends Model
 
 	public function comments()
 	{
-		return $this->hasMany(Comment::class)->latest();
+		// return $this->hasMany(Comment::class)->latest();
+		return $this->morphMany(Comment::class, 'commentable')->latest();
 	}
 
 	public function image()
 	{
-		return $this->hasOne(Image::class);
+		return $this->morphOne(Image::class, 'imageable');
 	}
 
 	public function tags()

@@ -40,11 +40,22 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
 	];
 	
+	public function image()
+	{
+		return $this->morphOne(Image::class, 'imageable');
+	}
+
 	public function blogPosts(){
 		return $this->hasMany(BlogPost::class);
 	}
 	public function comments(){
 		return $this->hasMany(Comment::class);
+	}
+
+	public function commentsOn()
+	{
+		// return $this->hasMany(Comment::class)->latest();
+		return $this->morphMany(Comment::class, 'commentable')->latest();
 	}
 
 	public function scopeMostActive(Builder $query)

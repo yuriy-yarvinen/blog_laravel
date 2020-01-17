@@ -1,5 +1,7 @@
 <?php
 
+use App\BlogPost;
+use App\User;
 use Illuminate\Database\Seeder;
 
 class CommentsTableSeeder extends Seeder
@@ -21,8 +23,9 @@ class CommentsTableSeeder extends Seeder
 		$commentsCount = max((int)$this->command->ask('How many comments do you want?',150), 1);
 
 		factory(App\Comment::class, $commentsCount)->make()->each(function($comment) use ($posts, $all_users){
-			$comment->blog_post_id = $posts->random()->id;
 			$comment->user_id = $all_users->random()->id;
+			$comment->commentable_id = $posts->random()->id;
+			$comment->commentable_type = BlogPost::class;
 			$comment->save();
 		});
     }
