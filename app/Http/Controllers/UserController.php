@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\CreateAllTables;
 use App\Http\Requests\UpdateUser;
 use App\Image;
+use App\Mail\SupportRequest;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
@@ -133,6 +135,25 @@ class UserController extends Controller
         $request->session()->invalidate();
 
         return redirect('/');
-    }
+	}
+	
+	public function sendSupportMail(Request $request)
+	{
+		$path = $request->file('file')->store('supports');
+
+		$url = Storage::url($path);
+
+		$request['url'] = $url;
+		$request['path'] = $path;
+		Mail::to($request->user())->send(
+			new SupportRequest($request)
+		);
+
+		// Storage::delete($path);
+
+
+		return redirect()->back()
+		->withRequestStatus('Заявка отправленна');
+	}
 
 }

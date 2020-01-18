@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Scope\LatestScope;
+use App\Traits\Taggable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -10,7 +11,7 @@ use Illuminate\Support\Facades\Cache;
 
 class Comment extends Model
 {
-	use SoftDeletes;
+	use SoftDeletes, Taggable;
 	protected $fillable = [
 		'content',
 		'user_id'
@@ -24,6 +25,14 @@ class Comment extends Model
 	public function commentable(){
 		return $this->morphTo();
 	}
+
+
+	// move to a trait App\Traits\Taggable.php
+	// public function tags()
+	// {
+	// 	// return $this->belongsToMany(Tag::class)->withTimestamps()->as('tagged');
+	// 	return $this->morphToMany(Tag::class, 'taggable')->withTimestamps()->as('tagged');
+	// }
 
 	public function scopeLatest(Builder $query)
 	{

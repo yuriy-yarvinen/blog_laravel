@@ -12,8 +12,9 @@
 */
 
 // Route::get('/','HomeController@home')->name('home')->middleware('auth');
-Route::get('/','HomeController@home')->name('home');
+
 Route::post('/deleteUser','UserController@deleteUser')->name('deleteUser');
+Route::post('/support','UserController@sendSupportMail')->name('sendSupportMail');
 Route::get('/contacts','HomeController@contacts')->name('contacts');
 
 Route::get('/posts/tags/{id}','PostTagController@index')->name('posts.tag.index');
@@ -26,3 +27,9 @@ Route::resource('users.comments','UserCommentController')->only(['store']);
 Route::resource('users','UserController')->only(['show', 'edit', 'update']);
 
 Auth::routes();
+
+Route::get('/', 'HomeController@home')->name('home');
+Route::get('mailable', function(){
+	$comment = App\Comment::find(1);
+	return new App\Mail\CommentPostedMarkdown($comment);
+});

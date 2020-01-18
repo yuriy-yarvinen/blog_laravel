@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Scope\DeletedPostAdminScope;
+use App\Traits\Taggable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -11,7 +12,7 @@ use Illuminate\Support\Facades\Cache;
 
 class BlogPost extends Model
 {
-	use SoftDeletes;
+	use SoftDeletes, Taggable;
 	//protected $table = 'blogpost';
 	
 	protected $fillable = ['title', 'content', 'json', 'user_id'];
@@ -40,11 +41,6 @@ class BlogPost extends Model
 	public function image()
 	{
 		return $this->morphOne(Image::class, 'imageable');
-	}
-
-	public function tags()
-	{
-		return $this->belongsToMany(Tag::class)->withTimestamps()->as('tagged');
 	}
 
 	public function user()

@@ -45,7 +45,9 @@ class PostTest extends TestCase
 
 		$post = $this->createPost($user->id);
 		factory(Comment::class, 4)->create([
-			'blog_post_id' => $post->id
+			'commentable_id' => $post->id,
+			'commentable_type' => BlogPost::class,
+			'user_id' => $user->id
 		]);
 		
 		// Act
