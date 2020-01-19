@@ -34,6 +34,7 @@ class PostWasCommented implements ShouldQueue
      */
     public function handle()
     {
+		// $now = now();
 		User::returnUserHoCommentThisPost($this->comment->commentable)
 		->get()
 		->filter(function (User $user){
@@ -41,9 +42,7 @@ class PostWasCommented implements ShouldQueue
 		})
 		->map(
 			function (User $user){
-				Mail::to($user)->send(
-					new CommentPostedOnWatch($this->comment, $user)
-				);
+				ThrottledMail::dispatch(new CommentPostedOnWatch($this->comment, $user), $user);
 			}
 		);
     }
